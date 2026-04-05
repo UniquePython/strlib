@@ -1,5 +1,5 @@
-#ifndef STRB_H_
-#define STRB_H_
+#ifndef SB_H_
+#define SB_H_
 
 #include <stddef.h>
 

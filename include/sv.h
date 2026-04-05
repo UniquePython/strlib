@@ -1,5 +1,5 @@
-#ifndef STRV_H_
-#define STRV_H_
+#ifndef SV_H_
+#define SV_H_
 
 #include <stddef.h>
 
