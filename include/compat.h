@@ -25,10 +25,12 @@
 #define STRLIB_STRINGIFY_(x) #x
 #define STRLIB_STRINGIFY(x) STRLIB_STRINGIFY_(x)
 
-#if defined(STRLIB_COMPILER_MSVC)
-#define STRLIB_WARN(msg) __pragma(message(msg))
-#elif defined(STRLIB_COMPILER_GCC) || defined(STRLIB_COMPILER_CLANG)
+#if defined(STRLIB_COMPILER_CLANG)
+#define STRLIB_WARN(msg) _Pragma(STRLIB_STRINGIFY(clang warning msg))
+#elif defined(STRLIB_COMPILER_GCC)
 #define STRLIB_WARN(msg) _Pragma(STRLIB_STRINGIFY(GCC warning msg))
+#elif defined(STRLIB_COMPILER_MSVC)
+#define STRLIB_WARN(msg) __pragma(message(msg))
 #else
 #define STRLIB_WARN(msg)
 #endif
@@ -56,6 +58,10 @@ STRLIB_WARN("SB_AUTO/STR_AUTO unavailable: no cleanup attribute")
 #define STRLIB_UNUSED
 #else
 #define STRLIB_UNUSED
+#endif
+
+#ifdef STRLIB_COMPILER_MSVC
+#error "MSVC not supported yet"
 #endif
 
 #endif /* STRLIB_COMPAT_H_ */
