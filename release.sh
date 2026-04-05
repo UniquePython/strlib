@@ -49,6 +49,9 @@ sudo cp build/libstrlib.a /usr/lib/libstrlib-$VERSION.a
 
 echo "==> updating symlinks"
 
+sudo rm -rf /usr/include/strlib
+sudo rm -f /usr/lib/libstrlib.a
+
 sudo ln -sfn /usr/include/strlib-$VERSION /usr/include/strlib
 sudo ln -sfn /usr/lib/libstrlib-$VERSION.a /usr/lib/libstrlib.a
 
