@@ -18,11 +18,6 @@ bool sv_eq_sv(SV a, SV b)
     return a.len == b.len && memcmp(a.data, b.data, a.len) == 0;
 }
 
-bool sv_eq_cstr(SV sv, const char *cstr)
-{
-    return sv_eq_sv(sv, sv_from_cstr(cstr));
-}
-
 int sv_cmp_sv(SV a, SV b)
 {
     size_t min_len = a.len < b.len ? a.len : b.len;
