@@ -1,6 +1,8 @@
 #ifndef SV_H_
 #define SV_H_
 
+#include "compat.h"
+
 #include <stddef.h>
 #include <stdbool.h>
 

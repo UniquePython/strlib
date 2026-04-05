@@ -41,8 +41,6 @@ Str str_concat_sv(SV a, SV b);
 
 #define str_concat(a, b) str_concat_sv(NEW_SV(a), NEW_SV(b))
 
-#ifdef __GNUC__
-#define STR_AUTO __attribute__((cleanup(str_free)))
-#endif
+#define STR_AUTO STRLIB_AUTO(str_free)
 
 #endif /* STR_H_ */

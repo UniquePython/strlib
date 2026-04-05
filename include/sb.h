@@ -70,8 +70,6 @@ Str sb_build(SB *sb);
         SB_CONCAT(SB_A, SB_NARGS(__VA_ARGS__))(sb, __VA_ARGS__); \
     } while (0)
 
-#ifdef __GNUC__
-#define SB_AUTO __attribute__((cleanup(sb_free)))
-#endif
+#define SB_AUTO STRLIB_AUTO(sb_free)
 
 #endif /* SB_H_ */
