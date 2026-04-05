@@ -1,8 +1,8 @@
 #ifndef STRLIB_H_
 #define STRLIB_H_
 
-#include "strv.h"
+#include "sv.h"
 #include "str.h"
-#include "strb.h"
+#include "sb.h"
 
 #endif
