@@ -59,7 +59,7 @@ release:
 	@if git rev-parse "v$(VERSION)" >/dev/null 2>&1; then \
 		echo "error: tag v$(VERSION) already exists"; exit 1; \
 	fi
-	$(MAKE) install
+	sudo $(MAKE) install VERSION=$(VERSION)
 	git tag v$(VERSION)
 	git push origin main --tags
 	@echo "released strlib v$(VERSION)"
