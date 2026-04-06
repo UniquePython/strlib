@@ -122,7 +122,7 @@ The library requires **C11 or above** to work. It is enforced at compile time by
 
 ### Platform
 
-[release.sh](release.sh) assumes Linux (hardcoded `/usr/include`, `/usr/lib`, `sudo`). The library itself is platform-agnostic C11.
+[Makefile](Makefile) assumes Linux (hardcoded linux commands and directories). The library itself is platform-agnostic C11.
 
 ### Dependencies
 
