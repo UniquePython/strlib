@@ -1,0 +1,9 @@
+prefix=@PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+
+Name: strlib
+Description: A small C11 string handling library
+Version: @VERSION@
+Libs: -L${libdir} -lstrlib
+Cflags: -I${includedir}/strlib

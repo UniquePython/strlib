@@ -25,8 +25,8 @@ int sv_cmp_sv(SV a, SV b);
 
 bool sv_starts_with_sv(SV sv, SV prefix);
 bool sv_ends_with_sv(SV sv, SV suffix);
-bool sv_contains_sv(SV sv, SV needle);
 size_t sv_find_sv(SV sv, SV needle);
+bool sv_contains_sv(SV sv, SV needle);
 
 SV sv_slice(SV sv, size_t start, size_t end);
 SV sv_trim_left(SV sv);

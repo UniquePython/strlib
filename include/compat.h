@@ -21,6 +21,10 @@
 #define STRLIB_COMPILER_NAME "unknown"
 #endif
 
+#ifdef STRLIB_COMPILER_MSVC
+#error "MSVC not supported yet"
+#endif
+
 /* ── Compile-time warnings ── */
 #define STRLIB_STRINGIFY_(x) #x
 #define STRLIB_STRINGIFY(x) STRLIB_STRINGIFY_(x)
@@ -58,10 +62,6 @@ STRLIB_WARN("SB_AUTO/STR_AUTO unavailable: no cleanup attribute")
 #define STRLIB_UNUSED
 #else
 #define STRLIB_UNUSED
-#endif
-
-#ifdef STRLIB_COMPILER_MSVC
-#error "MSVC not supported yet"
 #endif
 
 #endif /* STRLIB_COMPAT_H_ */
