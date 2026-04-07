@@ -25,6 +25,6 @@
 #include "sb.h"
 #endif
 
-#define STRLIB_VERSION "0.1.0"
+#define STRLIB_VERSION "0.2.0-dev"
 
 #endif /* STRLIB_H_ */
