@@ -191,6 +191,26 @@ gcc main.c -o app -I/usr/local/include/strlib -L/usr/local/lib -lstrlib
 
 ## Reference
 
+### SVArray
+
+```c
+typedef struct {
+    SV *data;
+    size_t len;
+    size_t cap;
+} SVArray;
+```
+
+A heap-allocated growable array of SVs. Returned by `sv_split`. Always call `sva_free` when done.
+
+`SVArray sva_new(void)` — Creates an empty array. Does not allocate until first push.
+
+`void sva_push(SVArray *arr, SV sv)` — Appends an SV to the array. Grows automatically.
+
+`SV sva_get(SVArray *arr, size_t i)` — Returns the SV at index i. Aborts with an error message if i is out of bounds.
+
+`void sva_free(SVArray *arr)` — Frees the backing array and zeroes the struct. Safe to call on an already-freed `SVArray`. Does not free the individual SVs — they are views and do not own memory.
+
 ### SV
 
 **Functions:**
@@ -221,11 +241,63 @@ gcc main.c -o app -I/usr/local/include/strlib -L/usr/local/lib -lstrlib
 
 `SV sv_chop_by_delim(SV *sv, char delim)` — Returns everything before the first `delim` and advances `sv` past it. If not found, returns the full view and leaves `sv` empty.
 
+`bool sv_is_empty(SV sv)` — Returns true if sv has zero length.
+
+`bool sv_is_whitespace(SV sv)` — Returns true if every byte is whitespace. Returns false on empty.
+
+`bool sv_is_alpha(SV sv)` — Returns true if every byte is an alphabetic character. Returns false on empty.
+
+`bool sv_is_numeric(SV sv)` — Returns true if every byte is a decimal digit. Returns false on empty.
+
+`bool sv_is_alphanumeric(SV sv)` — Returns true if every byte is alphabetic or a decimal digit. Returns false on empty.
+
+`bool sv_is_upper(SV sv)` — Returns true if every byte is an uppercase letter. Returns false on empty.
+
+`bool sv_is_lower(SV sv)` — Returns true if every byte is a lowercase letter. Returns false on empty.
+
+`size_t sv_count_sv(SV sv, SV needle, bool overlapping)` — Counts occurrences of needle in sv. If overlapping is false, matches do not overlap — `sv_count("aaa", "aa", false)` returns 1. If overlapping is true, every position is checked — `sv_count("aaa", "aa", true)` returns 2. Returns 0 if needle is empty or longer than sv.
+
+`bool sv_parse_int(SV sv, int *out)` — Parses sv as a decimal integer into `*out`. Returns true on success, false if the input is not a valid integer or overflows the type. If out is NULL, validates without storing. All sv_parse_* variants follow this same contract.
+
+`bool sv_parse_long(SV sv, long *out)` — Parses as `long`.
+
+`bool sv_parse_longlong(SV sv, long long *out)` — Parses as `long long`.
+
+`bool sv_parse_int8(SV sv, int8_t *out)` — Parses as `int8_t`.
+
+`bool sv_parse_int16(SV sv, int16_t *out)` — Parses as `int16_t`.
+
+`bool sv_parse_int32(SV sv, int32_t *out)` — Parses as `int32_t`.
+
+`bool sv_parse_int64(SV sv, int64_t *out)` — Parses as `int64_t`.
+
+`bool sv_parse_uint8(SV sv, uint8_t *out)` — Parses as `uint8_t`.
+
+`bool sv_parse_uint16(SV sv, uint16_t *out)` — Parses as `uint16_t`.
+
+`bool sv_parse_uint32(SV sv, uint32_t *out)` — Parses as `uint32_t`.
+
+`bool sv_parse_uint64(SV sv, uint64_t *out)` — Parses as `uint64_t`.
+
+`bool sv_parse_float(SV sv, float *out)` — Parses as `float`.
+
+`bool sv_parse_double(SV sv, double *out)` — Parses as `double`.
+
+`SVArray sv_split_char(SV sv, char delim, size_t maxsplit)` — Splits sv on every occurrence of delim. If maxsplit is non-zero, stops after that many splits and puts the remainder in the final element. Empty segments are preserved. Caller must call `sva_free` on the result.
+
+`SVArray sv_split_sv(SV sv, SV delim, size_t maxsplit)` — Same as `sv_split_char` but splits on a multi-character delimiter. If delim is empty, returns sv unsplit as a single element.
+
 **Macros:**
 
 `NEW_SV(s)` — Converts `SV`, `char *`, or `const char *` into an `SV` at compile time via `_Generic`. No copy.
 
 `sv_eq(a, b)`, `sv_cmp(a, b)`, `sv_starts_with(a, b)`, `sv_ends_with(a, b)`, `sv_contains(a, b)`, `sv_find(a, b)` — Type-coercing wrappers around their `_sv` counterparts. Accept any mix of `SV`, `char *`, or `const char *` as arguments.
+
+`sv_count(a, b)` — Counts non-overlapping occurrences of b in a. Accepts any mix of SV, `char *`, or `const char *`.
+
+`sv_count_overlapping(a, b)` — Counts overlapping occurrences of b in a. Accepts any mix of SV, `char *`, or `const char *`.
+
+`sv_split(sv, delim, maxsplit)` — Splits sv on delim, dispatching to `sv_split_char` or `sv_split_sv` based on the type of delim at compile time. Accepts char, SV, `char *`, or `const char *` as delimiter. Pass 0 for maxsplit to split everything.
 
 `SV_FMT`, `SV_ARGS(sv)` — Use with printf-style functions to print an SV without null-termination:
 ```c
@@ -353,6 +425,16 @@ Str s = str_concat(a, b);
 str_free(&a);
 str_free(&b);
 ```
+
+### `SVArray` views into freed memory
+
+The SVs inside an `SVArray` returned by `sv_split` are views into the original string's memory. Freeing or modifying the source string while still using the array will leave all the views dangling:
+```c
+SVArray parts = sv_split(sv_from_cstr(get_temp_string()), ',', 0); // imagine get_temp_string() is a fn that returns temp string
+// if get_temp_string()'s memory is gone, parts.data[i] are all dangling
+sva_free(&parts);
+```
+Make sure the source string outlives the `SVArray`.
 
 ### `SB_AUTO` / `STR_AUTO` are no-ops on unknown compilers
 

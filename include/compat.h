@@ -42,7 +42,9 @@
 /* ── Feature flags ── */
 #if defined(STRLIB_COMPILER_GCC) || defined(STRLIB_COMPILER_CLANG)
 #define STRLIB_HAS_CLEANUP
-#define STRLIB_HAS_TYPEOF
+#define STRLIB_TYPEOF(x) __typeof__(x)
+#else
+#define STRLIB_TYPEOF(x)
 #endif
 
 /* _Generic is C11, already guaranteed by standard check above */
